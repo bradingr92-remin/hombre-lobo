@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narrador Hombres Lobo – Versión Completa</title>
+    <style>
+        :root {
+            --color-fondo: #1a1a2e;
+            --color-contenedor: #16213e;
+            --color-primario: #0f3460;
+            --color-secundario: #e94560;
+            --color-texto: #ffffff;
+            --color-borde: #2d4059;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background: var(--color-fondo); 
+            color: var(--color-texto);
+            line-height: 1.6;
+        }
+        
+        .container { 
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px; 
+        }
+        
+        h1 { 
+            font-size: 2.2em; 
+            margin-bottom: 0.5em; 
+            text-align: center;
+            color: var(--color-secundario);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        h2 {
+            color: var(--color-secundario);
+            border-bottom: 1px solid var(--color-borde);
+            padding-bottom: 10px;
+        }
+        
+        .pantalla {
+            background: var(--color-contenedor);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid var(--color-borde);
+        }
+        
+        button { 
+            margin: 10px; 
+            padding: 12px 24px; 
+            font-size: 1.1em; 
+            border: none; 
+            border-radius: 8px; 
+            background: var(--color-primario); 
+            color: white; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: var(--color-secundario);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        input[type=number], input[type=text], select { 
+            padding: 12px; 
+            font-size: 1em; 
+            margin: 8px; 
+            border-radius: 8px; 
+            border: 1px solid var(--color-borde);
+            background: white;
+            color: #333;
+            width: 200px;
+        }
+        
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .rol-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--color-borde);
+            transition: all 0.3s ease;
+        }
+        
+        .rol-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-3px);
+        }
+        
+        .jugador-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border-left: 4px solid var(--color-primario);
+        }
+        
+        .jugador-item.alguacil {
+            border-left-color: gold;
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .jugador-item.muerto {
+            opacity: 0.6;
+            border-left-color: #888;
+            text-decoration: line-through;
+        }
+        
+        .fase-actual {
+            background: var(--color-primario);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid var(--color-secundario);
+        }
+        
+        .fase-actual h3 {
+            margin-top: 0;
+            color: var(--color-secundario);
+        }
+        
+        .acciones-container {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .estado-juego {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .estado-item {
+            background: var(--color-primario);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            margin: 5px;
+            min-width: 120px;
+        }
+        
+        .log-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid var(--color-secundario);
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .votacion-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        
+        .votos-bar {
+            height: 10px;
+            background: var(--color-primario);
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        
+        .votos-fill {
+            height: 100%;
+            background: var(--color-secundario);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        .info-balance {
+            background: rgba(233, 69, 96, 0.2);
+            border: 1px solid var(--color-secundario);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .pociones-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .pocion-btn {
+            padding: 15px 20px;
+            font-size: 1.2em;
+            border-radius: 10px;
+            border: 2px solid;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pocion-curar {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .pocion-curar:hover {
+            background: rgba(76, 175, 80, 0.5);
+        }
+        
+        .pocion-envenenar {
+            background: rgba(244, 67, 54, 0.3);
+            border-color: #f44336;
+            color: #f44336;
+        }
+        
+        .pocion-envenenar:hover {
+            background: rgba(244, 67, 54, 0.5);
+        }
+        
+        .pocion-no-usar {
+            background: rgba(158, 158, 158, 0.3);
+            border-color: #9E9E9E;
+            color: #9E9E9E;
+        }
+        
+        .pocion-no-usar:hover {
+            background: rgba(158, 158, 158, 0.5);
+        }
+        
+        .alguacil-badge {
+            background: gold;
+            color: black;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .votacion-manual {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .voto-jugador {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        
+        .roles-personalizacion {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .contador-rol {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 15px;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .contador-rol h3 {
+            margin-top: 0;
+            color: var(--color-secundario);
+        }
+        
+        .controles-contador {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .controles-contador button {
+            margin: 0;
+            padding: 8px 12px;
+            font-size: 1.2em;
+        }
+        
+        .controles-contador input {
+            width: 60px;
+            text-align: center;
+        }
+        
+        .rol-individual {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            border: 2px solid var(--color-secundario);
+        }
+        
+        .rol-individual h3 {
+            color: var(--color-secundario);
+            margin-top: 0;
+        }
+        
+        .rol-individual .rol-icono {
+            font-size: 3em;
+            margin: 10px 0;
+        }
+        
+        .rol-individual .rol-descripcion {
+            font-style: italic;
+            margin: 10px 0;
+        }
+        
+        .botones-partida {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .victima-info {
+            background: rgba(233, 69, 96, 0.3);
+            border: 2px solid var(--color-secundario);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.2em;
+        }
+        
+        .resultado-muerte {
+            background: rgba(233, 69, 96, 0.4);
+            border: 2px solid var(--color-secundario);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .roles-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .estado-juego {
+                flex-direction: column;
+            }
+            
+            .pociones-container {
+                flex-direction: column;
+            }
+            
+            .voto-jugador {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .roles-personalizacion {
+                flex-direction: column;
+            }
+            
+            .botones-partida {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐺 Narrador Hombres Lobo – Versión Completa</h1>
+        
+        <!-- Pantalla 1: Número de jugadores -->
+        <div id="pantalla1" class="pantalla">
+            <h2>Configuración inicial</h2>
+            <p>Introduce el número de jugadores (4-20):</p>
+            <input type="number" id="numJugadores" min="4" max="20" value="8">
+            <div>
+                <button onclick="sugerirRoles()">Sugerir roles equilibrados</button>
+                <button onclick="personalizarRoles()">Personalizar roles</button>
+            </div>
+            <div class="info-balance">
+                <h3>📊 Proporción recomendada:</h3>
+                <p>8-11 jugadores → 2 lobos<br>
+                12-15 jugadores → 3 lobos<br>
+                16-19 jugadores → 4 lobos<br>
+                20+ jugadores → 5 lobos</p>
+            </div>
+        </div>
+        
+        <!-- Pantalla 2: Roles sugeridos -->
+        <div id="pantalla2" class="pantalla" style="display:none;">
+            <h2>Roles sugeridos</h2>
+            <p>Estos roles han sido seleccionados automáticamente para un juego equilibrado:</p>
+            <div id="rolesContainer" class="roles-grid"></div>
+            <div>
+                <button onclick="aceptarRoles()">Aceptar Roles</button>
+                <button onclick="volverAPantalla1()">Volver</button>
+            </div>
+        </div>
+        
+        <!-- Pantalla 3: Personalizar roles -->
+        <div id="pantalla3" class="pantalla" style="display:none;">
+            <h2>Personalizar roles</h2>
+            <p>Selecciona los roles que quieres incluir en la partida:</p>
+            
+            <div class="roles-personalizacion">
+                <div class="contador-rol">
+                    <h3>🐺 Lobos Comunes</h3>
+                    <div class="controles-contador">
+                        <button onclick="cambiarCantidad('lobosComunes', -1)">-</button>
+                        <input type="number" id="cantidadLobosComunes" min="1" max="10" value="2">
+                        <button onclick="cambiarCantidad('lobosComunes', 1)">+</button>
+                    </div>
+                    <p>Lobos básicos que eligen una víctima cada noche</p>
+                </div>
+                
+                <div class="contador-rol">
+                    <h3>👨‍🌾 Aldeanos Comunes</h3>
+                    <div class="controles-contador">
+                        <button onclick="cambiarCantidad('aldeanosComunes', -1)">-</button>
+                        <input type="number" id="cantidadAldeanosComunes" min="1" max="15" value="4">
+                        <button onclick="cambiarCantidad('aldeanosComunes', 1)">+</button>
+                    </div>
+                    <p>Aldeanos sin habilidades especiales</p>
+                </div>
+            </div>
+            
+            <p>Selecciona roles especiales adicionales:</p>
+            <div id="rolesPersonalizadosContainer" class="roles-grid"></div>
+            <div>
+                <button onclick="confirmarRolesPersonalizados()">Confirmar Selección</button>
+                <button onclick="volverAPantalla1()">Volver</button>
+            </div>
+        </div>
+        
+        <!-- Pantalla 4: Introducir nombres -->
+        <div id="pantalla4" class="pantalla" style="display:none;">
+            <h2>Introduce nombres de jugadores</h2>
+            <div id="jugadoresContainer"></div>
+            <button onclick="asignarRoles()">Continuar</button>
+        </div>
+        
+        <!-- Pantalla 5: Registrar roles individuales -->
+        <div id="pantalla5" class="pantalla" style="display:none;">
+            <h2>🎭 Registrar Roles</h2>
+            <p>Pasa el teléfono a cada jugador para que registre SU PROPIO rol en privado:</p>
+            <div id="registroRolesContainer"></div>
+            <button id="btnContinuarRegistro" onclick="continuarAAlguacil()" disabled>Continuar a Elección de Alguacil</button>
+        </div>
+        
+        <!-- Pantalla 6: Elección del Alguacil -->
+        <div id="pantalla6" class="pantalla" style="display:none;">
+            <h2>🏅 Elección del Alguacil</h2>
+            <p>Selecciona al jugador que será el primer Alguacil:</p>
+            <div id="eleccionAlguacilContainer"></div>
+            <button onclick="confirmarAlguacil()">Confirmar Alguacil</button>
+        </div>
+        
+        <!-- Pantalla 7: Juego principal -->
+        <div id="pantalla7" class="pantalla" style="display:none;">
+            <div class="estado-juego">
+                <div class="estado-item">
+                    <h3>Noche</h3>
+                    <div id="noche" style="font-size: 1.5em;">1</div>
+                </div>
+                <div class="estado-item">
+                    <h3>Fase</h3>
+                    <div id="faseActualNombre">Inicio</div>
+                </div>
+                <div class="estado-item">
+                    <h3>Jugadores vivos</h3>
+                    <div id="jugadoresVivos">0</div>
+                </div>
+                <div class="estado-item">
+                    <h3>Alguacil</h3>
+                    <div id="alguacilActual">-</div>
+                </div>
+            </div>
+            
+            <div class="fase-actual">
+                <h3 id="faseTitulo">Preparando juego...</h3>
+                <div id="faseDescripcion"></div>
+            </div>
+            
+            <div id="accionesContainer" class="acciones-container"></div>
+            
+            <div id="votacionContainer" style="display:none;">
+                <h3>Votación</h3>
+                <div id="listaVotacion"></div>
+                <button id="btnFinalizarVotacion" onclick="finalizarVotacion()" style="display:none;">Finalizar votación</button>
+            </div>
+            
+            <div class="botones-partida">
+                <button id="btnSiguiente" onclick="siguienteFase()">Siguiente fase</button>
+                <button id="btnReiniciarPartida" onclick="reiniciarPartida()" style="background: #f0ad4e;">Reiniciar Partida</button>
+                <button id="btnNuevaPartida" onclick="nuevaPartida()" style="background: #d9534f;">Nueva Partida</button>
+            </div>
+            
+            <div class="log-container" id="logContainer">
+                <div class="log-header">
+                    <h3>Registro de eventos</h3>
+                    <button id="btnOcultarLog" onclick="toggleLog()">Ocultar</button>
+                </div>
+                <div id="logEventos"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // LISTA COMPLETA DE ROLES CON DESCRIPCIONES DETALLADAS.
+        const roles = [
+            {nombre:"Hombre Lobo Común", tipo:"lobo", equipo:"lobos", descripcion:"Cada noche, junto con los otros hombres lobo, elige a un jugador para devorar.", img:"🐺", imagen:"lobo_comun.png"},
+            {nombre:"Lobo Feroz", tipo:"lobo", equipo:"lobos", descripcion:"Puede devorar una segunda víctima si durante esa noche no muere nadie más.", img:"🐺", imagen:"lobo_feroz.png"},
+            {nombre:"Infecto Padre", tipo:"lobo", equipo:"lobos", descripcion:"Puede infectar a un aldeano una vez por partida, convirtiéndolo en hombre lobo.", img:"🦠", imagen:"padre_lobos.png"},
+            {nombre:"Hombre Lobo Albino", tipo:"lobo", equipo:"lobos", descripcion:"Puede eliminar a un Hombre Lobo una noche de cada dos.", img:"🐺", imagen:"lobo_albino.png"},
+            {nombre:"Perro Lobo", tipo:"lobo", equipo:"lobos", descripcion:"Al inicio del juego, decide si será Aldeano o Hombre Lobo.", img:"🐕", imagen:"perro_lobo.png"},
+            {nombre:"Aldeano Común", tipo:"aldeano", equipo:"aldeanos", descripcion:"Sin habilidad especial. Debe usar su intuición para descubrir a los hombres lobo.", img:"👨‍🌾", imagen:"aldeano_comun.png"},
+            {nombre:"Aldeano-Aldeano", tipo:"aldeano", equipo:"aldeanos", descripcion:"Su identidad es conocida por todos desde el inicio.", img:"👨‍🌾", imagen:"aldeano_comun.png"},
+            {nombre:"Vidente", tipo:"aldeano", equipo:"aldeanos", descripcion:"Cada noche puede ver la carta de un jugador para conocer su rol.", img:"🔮", imagen:"vidente.png"},
+            {nombre:"Cupido", tipo:"aldeano", equipo:"aldeanos", descripcion:"Al inicio designa a dos jugadores enamorados. Si uno muere, el otro también.", img:"🏹", imagen:"cupido.png"},
+            {nombre:"Bruja", tipo:"aldeano", equipo:"aldeanos", descripcion:"Tiene una poción curativa (para salvar) y una venenosa (para eliminar). Cada una se puede usar una vez por partida.", img:"🧙‍♀️", imagen:"bruja.png"},
+            {nombre:"Cazador", tipo:"aldeano", equipo:"aldeanos", descripcion:"Si muere, puede disparar a otro jugador antes de abandonar el juego.", img:"🔫", imagen:"cazador.png"},
+            {nombre:"Niña Pequeña", tipo:"aldeano", equipo:"aldeanos", descripcion:"Puede espiar a los Hombres Lobo durante la noche, pero si es descubierta, muere.", img:"👧", imagen:"niña_pequeña.png"},
+            {nombre:"Protector", tipo:"aldeano", equipo:"aldeanos", descripcion:"Protege a un jugador cada noche de los ataques de los hombres lobo.", img:"🛡️", imagen:"protector.png"},
+            {nombre:"Anciano", tipo:"aldeano", equipo:"aldeanos", descripcion:"Necesita dos ataques de Hombres Lobo para morir.", img:"👴", imagen:"anciano.png"},
+            {nombre:"Dos Hermanas", tipo:"aldeano", equipo:"aldeanos", descripcion:"Se reconocen y pueden consultarse en secreto durante la noche.", img:"👭", imagen:"dos_hermanas.png"},
+            {nombre:"Tres Hermanos", tipo:"aldeano", equipo:"aldeanos", descripcion:"Se reconocen y pueden consultarse en secreto durante la noche.", img:"👬", imagen:"tres_hermanos.png"},
+            {nombre:"Zorro", tipo:"aldeano", equipo:"aldeanos", descripcion:"Puede comprobar un grupo de tres jugadores adyacentes por la noche. Si hay al menos un hombre lobo, puede seguir usando su poder.", img:"🦊", imagen:"zorro.png"},
+            {nombre:"Domador de Osos", tipo:"aldeano", equipo:"aldeanos", descripcion:"Recibe señales (el oso gruñe) si hay Hombres Lobo entre sus jugadores adyacentes.", img:"🐻", imagen:"domador_osos.png"},
+            {nombre:"Juez Tartamudo", tipo:"aldeano", equipo:"aldeanos", descripcion:"Puede decidir dos linchamientos seguidos durante el día.", img:"⚖️", imagen:"tartamudo.png"},
+            {nombre:"Caballero Espada Oxidada", tipo:"aldeano", equipo:"aldeanos", descripcion:"Si muere, un Hombre Lobo enferma y pierde su poder la siguiente noche.", img:"⚔️", imagen:"caballero.png"},
+            {nombre:"Ladrón", tipo:"aldeano", equipo:"aldeanos", descripcion:"Puede robar una carta sobrante al inicio, cambiando su rol.", img:"🦹", imagen:"ladron.png"},
+            {nombre:"Abnegada Sirvienta", tipo:"aldeano", equipo:"aldeanos", descripcion:"Puede cambiar su rol con el jugador linchado.", img:"👩‍🍳", imagen:"sirvienta.png"},
+            {nombre:"Comediante", tipo:"aldeano", equipo:"aldeanos", descripcion:"Puede usar el poder de un personaje especial sobrante una vez por partida.", img:"🤡", imagen:"comediante.png"},
+            {nombre:"Ángel", tipo:"aldeano", equipo:"aldeanos", descripcion:"Gana si es linchado o devorado durante la primera noche.", img:"😇", imagen:"angel.png"},
+            {nombre:"Flautista", tipo:"aldeano", equipo:"aldeanos", descripcion:"Hechiza a jugadores cada noche. Gana cuando todos los jugadores están hechizados.", img:"🎶", imagen:"flautista.png"},
+            {nombre:"Abominable Sectario", tipo:"aldeano", equipo:"aldeanos", descripcion:"Antes de empezar se le asigna un grupo a eliminar. Gana si sobrevive con ese grupo.", img:"👤", imagen:"abominable_sectario.png"},
+            {nombre:"Pirómano", tipo:"aldeano", equipo:"aldeanos", descripcion:"Puede quemar un edificio una vez por partida, eliminando a todos los jugadores dentro.", img:"🔥", imagen:"piromano.png"},
+            {nombre:"Cuervo", tipo:"aldeano", equipo:"aldeanos", descripcion:"Cada noche, puede añadir dos votos extra a un jugador objetivo para la siguiente votación.", img:"🐦‍⬛", imagen:"cuervo.png"},
+            {nombre:"Guardia", tipo:"aldeano", equipo:"aldeanos", descripcion:"Puede leer cartas de evento cada mañana para obtener información.", img:"👮‍♂️"},
+            {nombre:"Gitana", tipo:"aldeano", equipo:"aldeanos", descripcion:"Usa cartas de espiritismo para señalar jugadores y obtener información sobre ellos.", img:"🔮", imagen:"gitana.png"}
+        ];
+
+        // Variables globales del juego
+        let numJugadores = 0;
+        let rolesSugeridos = [];
+        let jugadores = [];
+        let faseActual = 0;
+        let noche = 1;
+        let logEventos = [];
+        let enamorados = [];
+        let jugadoresHechizados = [];
+        let jugadoresInfectados = [];
+        let votos = {};
+        let votacionActiva = false;
+        let pociónCuraUsada = false;
+        let pociónVenenoUsada = false;
+        let alguacilActual = null;
+        let accionCompletada = false;
+        let votosIndividuales = {};
+        let votosContados = 0;
+        let nombresGuardados = [];
+        let logVisible = true;
+        let rolesRegistrados = 0;
+        let victimaNoche = null;
+        let segundaVictimaNoche = null;
+
+        // ORDEN PRIMERA NOCHE
+        const ordenPrimeraNoche = [
+            "Ladrón", "Cupido", "Enamorados", "Vidente", "Zorro", "Dos Hermanas", "Tres Hermanos", 
+            "Domador de Osos", "Cuervo", "Pirómano", "Protector", "Hombre Lobo Común", "Perro Lobo", 
+            "Hombre Lobo Albino", "Infecto Padre", "Lobo Feroz", "Niña Pequeña", "Bruja", "Gitana", 
+            "Flautista", "Jugadores Hechizados"
+        ];
+
+        // ORDEN NOCHES SIGUIENTES
+        const ordenNoches = [
+            "Vidente", "Zorro", "Cuervo", "Pirómano", "Protector", "Hombre Lobo Común",
+            "Perro Lobo", "Jugadores Infectados", "Niña Pequeña", "Hombre Lobo Albino", 
+            "Infecto Padre", "Lobo Feroz", "Bruja", "Gitana", "Flautista", "Jugadores Hechizados"
+        ];
+
+        // FUNCION PARA CALCULAR NÚMERO DE LOBOS SEGÚN LA PROPORCIÓN CORRECTA
+        function calcularNumeroLobos(numJugadores) {
+            if (numJugadores >= 8 && numJugadores <= 11) return 2;
+            if (numJugadores >= 12 && numJugadores <= 15) return 3;
+            if (numJugadores >= 16 && numJugadores <= 19) return 4;
+            if (numJugadores >= 20) return 5;
+            return 1;
+        }
+
+        // FUNCIONES DE CONFIGURACIÓN INICIAL
+        function sugerirRoles() {
+            numJugadores = parseInt(document.getElementById("numJugadores").value);
+            if (numJugadores < 4 || numJugadores > 20) {
+                alert("El número de jugadores debe estar entre 4 y 20");
+                return;
+            }
+            
+            rolesSugeridos = [];
+            
+            // Calcular número de lobos según la proporción correcta
+            let numLobos = calcularNumeroLobos(numJugadores);
+            
+            // Añadir lobos (todos comunes por defecto)
+            for(let i = 0; i < numLobos; i++) {
+                rolesSugeridos.push("Hombre Lobo Común");
+            }
+            
+            // Añadir roles especiales según número de jugadores
+            let rolesEspeciales = [];
+            
+            if (numJugadores >= 6) rolesEspeciales.push("Vidente");
+            if (numJugadores >= 7) rolesEspeciales.push("Bruja");
+            if (numJugadores >= 8) rolesEspeciales.push("Cazador");
+            if (numJugadores >= 9) rolesEspeciales.push("Protector");
+            if (numJugadores >= 10) rolesEspeciales.push("Cupido");
+            if (numJugadores >= 12) rolesEspeciales.push("Domador de Osos");
+            if (numJugadores >= 14) rolesEspeciales.push("Flautista");
+            
+            // Añadir roles especiales
+            rolesEspeciales.forEach(rolNombre => {
+                rolesSugeridos.push(rolNombre);
+            });
+            
+            // Completar con aldeanos comunes
+            while(rolesSugeridos.length < numJugadores) {
+                rolesSugeridos.push("Aldeano Común");
+            }
+            
+            mostrarRolesSugeridos();
+        }
+
+        function personalizarRoles() {
+            numJugadores = parseInt(document.getElementById("numJugadores").value);
+            if (numJugadores < 4 || numJugadores > 20) {
+                alert("El número de jugadores debe estar entre 4 y 20");
+                return;
+            }
+            
+            document.getElementById("pantalla1").style.display = "none";
+            document.getElementById("pantalla3").style.display = "block";
+            
+            let container = document.getElementById("rolesPersonalizadosContainer");
+            container.innerHTML = "";
+            
+            // Mostrar información sobre el número recomendado de lobos
+            let numLobosRecomendado = calcularNumeroLobos(numJugadores);
+            let infoLobos = document.createElement("div");
+            infoLobos.className = "info-balance";
+            infoLobos.innerHTML = `<p><strong>Para ${numJugadores} jugadores se recomiendan ${numLobosRecomendado} lobos</strong></p>`;
+            container.appendChild(infoLobos);
+            
+            // Mostrar solo roles especiales (excluyendo lobos comunes y aldeanos comunes)
+            let rolesEspeciales = roles.filter(r => 
+                r.nombre !== "Hombre Lobo Común" && 
+                r.nombre !== "Aldeano Común"
+            );
+            
+            rolesEspeciales.forEach(rol => {
+                let div = document.createElement("div");
+                div.className = "rol-item";
+                div.innerHTML = `
+                    <input type="checkbox" id="rol-${rol.nombre}" value="${rol.nombre}">
+                    <label for="rol-${rol.nombre}">
+                        <span style="font-size: 1.5em;">${rol.img}</span> 
+                        <strong>${rol.nombre}</strong><br>
+                        <small>${rol.descripcion}</small>
+                    </label>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function cambiarCantidad(tipo, cambio) {
+            let input;
+            if (tipo === 'lobosComunes') {
+                input = document.getElementById('cantidadLobosComunes');
+            } else if (tipo === 'aldeanosComunes') {
+                input = document.getElementById('cantidadAldeanosComunes');
+            }
+            
+            let valor = parseInt(input.value) + cambio;
+            let min = parseInt(input.min);
+            let max = parseInt(input.max);
+            
+            if (valor >= min && valor <= max) {
+                input.value = valor;
+            }
+        }
+
+        function confirmarRolesPersonalizados() {
+            // Obtener cantidad de lobos comunes y aldeanos comunes
+            let cantidadLobosComunes = parseInt(document.getElementById("cantidadLobosComunes").value);
+            let cantidadAldeanosComunes = parseInt(document.getElementById("cantidadAldeanosComunes").value);
+            
+            // Verificar que la suma no exceda el número de jugadores
+            if (cantidadLobosComunes + cantidadAldeanosComunes > numJugadores) {
+                alert(`La suma de lobos comunes (${cantidadLobosComunes}) y aldeanos comunes (${cantidadAldeanosComunes}) no puede exceder el número total de jugadores (${numJugadores}).`);
+                return;
+            }
+            
+            rolesSugeridos = [];
+            
+            // Añadir lobos comunes
+            for(let i = 0; i < cantidadLobosComunes; i++) {
+                rolesSugeridos.push("Hombre Lobo Común");
+            }
+            
+            // Añadir aldeanos comunes
+            for(let i = 0; i < cantidadAldeanosComunes; i++) {
+                rolesSugeridos.push("Aldeano Común");
+            }
+            
+            // Añadir roles especiales seleccionados
+            let checkboxes = document.querySelectorAll('#rolesPersonalizadosContainer input[type="checkbox"]:checked');
+            
+            checkboxes.forEach(checkbox => {
+                rolesSugeridos.push(checkbox.value);
+            });
+            
+            // Verificar que tenemos suficientes roles
+            if (rolesSugeridos.length < numJugadores) {
+                // Completar con aldeanos comunes
+                while(rolesSugeridos.length < numJugadores) {
+                    rolesSugeridos.push("Aldeano Común");
+                }
+            } else if (rolesSugeridos.length > numJugadores) {
+                alert(`Has seleccionado ${rolesSugeridos.length} roles, pero solo hay ${numJugadores} jugadores. Se eliminarán los roles excedentes.`);
+                // Eliminar roles excedentes (priorizando mantener lobos)
+                while(rolesSugeridos.length > numJugadores) {
+                    // Buscar un aldeano común para eliminar
+                    let index = rolesSugeridos.indexOf("Aldeano Común");
+                    if (index !== -1) {
+                        rolesSugeridos.splice(index, 1);
+                    } else {
+                        // Si no hay aldeanos comunes, eliminar el último rol especial
+                        rolesSugeridos.pop();
+                    }
+                }
+            }
+            
+            // Verificar que hay suficientes lobos
+            let numLobosSeleccionados = rolesSugeridos.filter(r => r.includes("Lobo")).length;
+            let numLobosRecomendado = calcularNumeroLobos(numJugadores);
+            
+            if (numLobosSeleccionados < numLobosRecomendado) {
+                if (!confirm(`Has seleccionado ${numLobosSeleccionados} lobos, pero se recomiendan ${numLobosRecomendado} para ${numJugadores} jugadores. ¿Continuar de todas formas?`)) {
+                    return;
+                }
+            } else if (numLobosSeleccionados > numLobosRecomendado) {
+                if (!confirm(`Has seleccionado ${numLobosSeleccionados} lobos, pero se recomiendan ${numLobosRecomendado} para ${numJugadores} jugadores. ¿Continuar de todas formas?`)) {
+                    return;
+                }
+            }
+            
+            mostrarRolesSugeridos();
+        }
+
+        function mostrarRolesSugeridos() {
+            document.getElementById("pantalla1").style.display = "none";
+            document.getElementById("pantalla3").style.display = "none";
+            document.getElementById("pantalla2").style.display = "block";
+            
+            let container = document.getElementById("rolesContainer");
+            container.innerHTML = "";
+            
+            // Contar tipos de roles
+            let contadorLobos = rolesSugeridos.filter(r => r.includes("Lobo")).length;
+            let contadorAldeanos = rolesSugeridos.filter(r => !r.includes("Lobo")).length;
+            let numLobosRecomendado = calcularNumeroLobos(numJugadores);
+            
+            let info = document.createElement("div");
+            info.className = "info-balance";
+            info.innerHTML = `
+                <p><strong>Resumen del balance:</strong></p>
+                <p>${contadorLobos} hombres lobo vs ${contadorAldeanos} aldeanos</p>
+                <p>Para ${numJugadores} jugadores: ${numLobosRecomendado} lobos recomendados</p>
+                <p><strong>Total de cartas: ${rolesSugeridos.length}</strong></p>
+            `;
+            container.appendChild(info);
+            
+            // Contar frecuencia de roles
+            let frecuencia = {};
+            rolesSugeridos.forEach(rol => {
+                frecuencia[rol] = (frecuencia[rol] || 0) + 1;
+            });
+            
+            for (let rol in frecuencia) {
+                let rolInfo = roles.find(r => r.nombre === rol);
+                let div = document.createElement("div");
+                div.className = "rol-item";
+                div.innerHTML = `
+                    <span style="font-size: 1.5em;">${rolInfo.img}</span> 
+                    <strong>${rol} (${frecuencia[rol]})</strong><br>
+                    <small>${rolInfo.descripcion}</small>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        function aceptarRoles() {
+            document.getElementById("pantalla2").style.display = "none";
+            document.getElementById("pantalla4").style.display = "block";
+            
+            let container = document.getElementById("jugadoresContainer");
+            container.innerHTML = "";
+            
+            for(let i = 0; i < numJugadores; i++) {
+                let div = document.createElement("div");
+                div.className = "jugador-item";
+                div.innerHTML = `
+                    <span>Jugador ${i+1}:</span>
+                    <input type="text" id="nombre${i}" placeholder="Nombre" value="${nombresGuardados[i] || `Jugador ${i+1}`}">
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        function asignarRoles() {
+            jugadores = [];
+            nombresGuardados = [];
+            
+            // Recoger nombres de jugadores y guardarlos
+            for(let i = 0; i < numJugadores; i++) {
+                let nombre = document.getElementById(`nombre${i}`).value || `Jugador ${i+1}`;
+                nombresGuardados.push(nombre);
+                jugadores.push({
+                    id: i,
+                    nombre: nombre,
+                    rol: null, // Se asignará después
+                    muerto: false,
+                    objetivo: null,
+                    hechizado: false,
+                    protegido: false,
+                    infectado: false,
+                    votos: 0,
+                    enamorado: false,
+                    alguacil: false
+                });
+            }
+            
+            document.getElementById("pantalla4").style.display = "none";
+            document.getElementById("pantalla5").style.display = "block";
+            
+            mostrarRegistroRoles();
+        }
+
+        function mostrarRegistroRoles() {
+            let container = document.getElementById("registroRolesContainer");
+            container.innerHTML = "";
+            rolesRegistrados = 0;
+            
+            jugadores.forEach(jugador => {
+                let div = document.createElement("div");
+                div.className = "rol-individual";
+                div.id = `registro-${jugador.id}`;
+                div.innerHTML = `
+                    <h3>${jugador.nombre}</h3>
+                    <p>Selecciona el rol de tu carta:</p>
+                    <select id="rolJugador${jugador.id}">
+                        <option value="">-- Selecciona tu rol --</option>
+                        ${rolesSugeridos.map(rol => {
+                            let rolInfo = roles.find(r => r.nombre === rol);
+                            return `<option value="${rol}">${rolInfo.img} ${rol}</option>`;
+                        }).join('')}
+                    </select>
+                    <button onclick="registrarRol(${jugador.id})">Confirmar mi rol</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function registrarRol(idJugador) {
+            let select = document.getElementById(`rolJugador${idJugador}`);
+            let rolNombre = select.value;
+            
+            if (!rolNombre) {
+                alert("Debes seleccionar un rol");
+                return;
+            }
+            
+            let jugador = jugadores.find(j => j.id === idJugador);
+            let rol = roles.find(r => r.nombre === rolNombre);
+            jugador.rol = rol;
+            
+            // Ocultar este registro
+            document.getElementById(`registro-${idJugador}`).style.display = "none";
+            
+            rolesRegistrados++;
+            
+            // Si todos han registrado su rol, habilitar continuar
+            if (rolesRegistrados === jugadores.length) {
+                document.getElementById("btnContinuarRegistro").disabled = false;
+            }
+        }
+
+        function continuarAAlguacil() {
+            document.getElementById("pantalla5").style.display = "none";
+            document.getElementById("pantalla6").style.display = "block";
+            
+            let container = document.getElementById("eleccionAlguacilContainer");
+            container.innerHTML = "";
+            
+            jugadores.forEach(jugador => {
+                let div = document.createElement("div");
+                div.className = "jugador-item";
+                div.innerHTML = `
+                    <input type="radio" name="alguacil" id="alguacil-${jugador.id}" value="${jugador.id}">
+                    <label for="alguacil-${jugador.id}">${jugador.nombre}</label>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function confirmarAlguacil() {
+            let seleccionado = document.querySelector('input[name="alguacil"]:checked');
+            if (!seleccionado) {
+                alert("Por favor, selecciona un jugador para ser el Alguacil");
+                return;
+            }
+            
+            let idAlguacil = parseInt(seleccionado.value);
+            alguacilActual = jugadores.find(j => j.id === idAlguacil);
+            alguacilActual.alguacil = true;
+            
+            agregarLogEvento(`¡${alguacilActual.nombre} ha sido elegido Alguacil! Su voto contará doble.`);
+            
+            // Iniciar el juego
+            document.getElementById("pantalla6").style.display = "none";
+            document.getElementById("pantalla7").style.display = "block";
+            
+            // Inicializar variables del juego
+            logEventos = [];
+            enamorados = [];
+            jugadoresHechizados = [];
+            jugadoresInfectados = [];
+            votos = {};
+            votacionActiva = false;
+            pociónCuraUsada = false;
+            pociónVenenoUsada = false;
+            faseActual = 0;
+            noche = 1;
+            victimaNoche = null;
+            segundaVictimaNoche = null;
+            
+            // Actualizar interfaz
+            actualizarEstadoJuego();
+            mostrarFase();
+            
+            // Añadir evento al log
+            agregarLogEvento(`¡La partida ha comenzado! ${numJugadores} jugadores participan.`);
+            agregarLogEvento(`Balance: ${rolesSugeridos.filter(r => r.includes("Lobo")).length} lobos vs ${rolesSugeridos.filter(r => !r.includes("Lobo")).length} aldeanos.`);
+        }
+
+        // FUNCIONES PRINCIPALES DEL JUEGO
+        function mostrarFase() {
+            let orden = (noche === 1) ? ordenPrimeraNoche : ordenNoches;
+            
+            // Si hemos pasado todas las fases, iniciar el día
+            if (faseActual >= orden.length) {
+                iniciarDia();
+                return;
+            }
+            
+            let rolActual = orden[faseActual];
+            let jugadoresConRol = jugadores.filter(j => !j.muerto && j.rol.nombre === rolActual);
+            
+            // Casos especiales
+            if (rolActual === "Enamorados" && enamorados.length > 0) {
+                jugadoresConRol = enamorados.filter(j => !j.muerto);
+            } else if (rolActual === "Jugadores Hechizados" && jugadoresHechizados.length > 0) {
+                jugadoresConRol = jugadoresHechizados.filter(j => !j.muerto);
+            } else if (rolActual === "Jugadores Infectados" && jugadoresInfectados.length > 0) {
+                jugadoresConRol = jugadoresInfectados.filter(j => !j.muerto);
+            }
+            
+            // Si no hay jugadores con este rol activo, pasar a la siguiente fase
+            if (jugadoresConRol.length === 0) {
+                faseActual++;
+                mostrarFase();
+                return;
+            }
+            
+            // Mostrar información de la fase actual
+            let tituloFase = "";
+            let descripcionFase = "";
+            let accionesHTML = "";
+            
+            if (rolActual === "Enamorados") {
+                tituloFase = "💘 Los Enamorados se despiertan";
+                descripcionFase = "Los enamorados pueden reconocerse y planear su estrategia.";
+                accionesHTML = `<p>Los enamorados son: ${enamorados.map(e => e.nombre).join(" y ")}</p>`;
+            } else if (rolActual === "Jugadores Hechizados") {
+                tituloFase = "🎶 Jugadores hechizados";
+                descripcionFase = "Los jugadores hechizados por el flautista deben seguir sus instrucciones.";
+                accionesHTML = `<p>Jugadores hechizados: ${jugadoresHechizados.map(j => j.nombre).join(", ")}</p>`;
+            } else if (rolActual === "Jugadores Infectados") {
+                tituloFase = "🦠 Jugadores infectados";
+                descripcionFase = "Los jugadores infectados se convierten en hombres lobo.";
+                accionesHTML = `<p>Jugadores infectados: ${jugadoresInfectados.map(j => j.nombre).join(", ")}</p>`;
+            } else {
+                let jugador = jugadoresConRol[0];
+                tituloFase = `🌙 Se despierta ${jugador.rol.nombre}`;
+                descripcionFase = jugador.rol.descripcion;
+                
+                // Generar acciones según el rol
+                accionesHTML = generarAccionesParaRol(jugador, rolActual);
+            }
+            
+            document.getElementById("faseTitulo").textContent = tituloFase;
+            document.getElementById("faseDescripcion").textContent = descripcionFase;
+            document.getElementById("accionesContainer").innerHTML = accionesHTML;
+            
+            // Ocultar contenedor de votación
+            document.getElementById("votacionContainer").style.display = "none";
+            
+            // Actualizar nombre de fase actual
+            document.getElementById("faseActualNombre").textContent = rolActual;
+            
+            // Bloquear botón "Siguiente" hasta completar acción
+            accionCompletada = false;
+            document.getElementById("btnSiguiente").disabled = true;
+        }
+
+        function generarAccionesParaRol(jugador, rolActual) {
+            let accionesHTML = `<button onclick="alert('${jugador.rol.descripcion}')">Recordar habilidad</button>`;
+            
+            switch(rolActual) {
+                case "Cupido":
+                    if (noche === 1 && enamorados.length === 0) {
+                        accionesHTML += `
+                            <p>Selecciona dos jugadores para convertirlos en enamorados:</p>
+                            <select id="enamorado1">
+                                ${generarOpcionesJugadores(jugador.id)}
+                            </select>
+                            <select id="enamorado2">
+                                ${generarOpcionesJugadores(jugador.id)}
+                            </select>
+                            <button onclick="completarAccionCupido()">Confirmar enamorados</button>
+                        `;
+                    }
+                    break;
+                    
+                case "Vidente":
+                    accionesHTML += `
+                        <p>Elige un jugador para ver su rol:</p>
+                        <select id="objetivoVidente">
+                            ${generarOpcionesJugadores(jugador.id)}
+                        </select>
+                        <button onclick="accionVidente()">Ver rol</button>
+                    `;
+                    break;
+                    
+                case "Bruja":
+                    accionesHTML += `
+                        <p>Acciones disponibles:</p>
+                        <div class="pociones-container">
+                            ${!pociónCuraUsada && victimaNoche ? `
+                            <button class="pocion-btn pocion-curar" onclick="usarPocionCura()">👍 Salvar a ${victimaNoche.nombre}</button>
+                            ` : ''}
+                            ${!pociónVenenoUsada ? `
+                            <div style="margin:15px 0;">
+                                <p>Envenenar a:</p>
+                                <select id="victimaVeneno">
+                                    <option value="">Selecciona un jugador</option>
+                                    ${generarOpcionesJugadores(-1, "aldeano")}
+                                </select>
+                                <button class="pocion-btn pocion-envenenar" onclick="usarPocionVeneno()">👎 Envenenar</button>
+                            </div>
+                            ` : ''}
+                            <button class="pocion-btn pocion-no-usar" onclick="noUsarPociones()">❌ No usar pociones</button>
+                        </div>
+                    `;
+                    break;
+                    
+                case "Protector":
+                    accionesHTML += `
+                        <p>Protege a un jugador esta noche:</p>
+                        <select id="objetivoProtector">
+                            ${generarOpcionesJugadores()}
+                        </select>
+                        <button onclick="protegerJugador()">Proteger</button>
+                    `;
+                    break;
+                    
+                case "Hombre Lobo Común":
+                    accionesHTML += `
+                        <p>Elige una víctima para devorar:</p>
+                        <select id="victimaLobo">
+                            ${generarOpcionesJugadores(jugador.id, "aldeano")}
+                        </select>
+                        <button onclick="elegirVictima()">Seleccionar víctima</button>
+                    `;
+                    break;
+                    
+                case "Lobo Feroz":
+                    if (victimaNoche) {
+                        accionesHTML += `
+                            <p>Los lobos ya han elegido a ${victimaNoche.nombre} como víctima.</p>
+                            <p>¿Quieres devorar una segunda víctima?</p>
+                            <select id="segundaVictima">
+                                <option value="">Selecciona segunda víctima</option>
+                                ${generarOpcionesJugadores(jugador.id, "aldeano")}
+                            </select>
+                            <button onclick="elegirSegundaVictima()">Devorar segunda víctima</button>
+                            <button onclick="noSegundaVictima()">No devorar segunda víctima</button>
+                        `;
+                    } else {
+                        accionesHTML = `<p>Esperando a que los lobos elijan la primera víctima...</p>`;
+                    }
+                    break;
+                    
+                case "Flautista":
+                    accionesHTML += `
+                        <p>Elige un jugador para hechizar:</p>
+                        <select id="objetivoFlautista">
+                            ${generarOpcionesJugadores(jugador.id)}
+                        </select>
+                        <button onclick="hechizarJugador()">Hechizar</button>
+                    `;
+                    break;
+                    
+                default:
+                    accionesHTML += `<p>No hay acciones específicas para este rol en esta fase.</p>`;
+                    // Para roles sin acción específica, permitir avanzar inmediatamente
+                    accionCompletada = true;
+                    document.getElementById("btnSiguiente").disabled = false;
+            }
+            
+            return accionesHTML;
+        }
+
+        function generarOpcionesJugadores(excluirId = -1, filtrarTipo = "") {
+            let options = '<option value="">Selecciona un jugador</option>';
+            jugadores.forEach(j => {
+                if (!j.muerto && j.id !== excluirId) {
+                    if (!filtrarTipo || j.rol.tipo === filtrarTipo) {
+                        options += `<option value="${j.id}">${j.nombre}</option>`;
+                    }
+                }
+            });
+            return options;
+        }
+
+        function siguienteFase() {
+            if (!accionCompletada) {
+                alert("Debes completar la acción antes de pasar a la siguiente fase.");
+                return;
+            }
+            
+            faseActual++;
+            mostrarFase();
+        }
+
+        function iniciarDia() {
+            // Procesar víctimas de la noche
+            let mensajeAmanecer = "¡Amanece un nuevo día! ";
+            let victimas = [];
+            
+            if (victimaNoche && !victimaNoche.protegido) {
+                victimaNoche.muerto = true;
+                victimas.push(victimaNoche);
+            }
+            
+            if (segundaVictimaNoche) {
+                segundaVictimaNoche.muerto = true;
+                victimas.push(segundaVictimaNoche);
+            }
+            
+            if (victimas.length === 0) {
+                mensajeAmanecer += "Nadie ha muerto durante la noche.";
+            } else {
+                mensajeAmanecer += "Víctimas de la noche: " + victimas.map(v => `${v.nombre} (${v.rol.nombre})`).join(", ");
+                
+                // Verificar si el Alguacil ha muerto
+                let alguacilMuerto = victimas.find(v => v.alguacil);
+                if (alguacilMuerto) {
+                    mensajeAmanecer += `. ${alguacilMuerto.nombre} (Alguacil) ha muerto y debe designar sucesor.`;
+                    designarSucesorAlguacil(alguacilMuerto);
+                }
+            }
+            
+            // Limpiar protecciones
+            jugadores.forEach(j => j.protegido = false);
+            
+            // Mostrar resultados
+            document.getElementById("faseTitulo").textContent = "☀️ Amanecer";
+            document.getElementById("faseDescripcion").textContent = mensajeAmanecer;
+            document.getElementById("accionesContainer").innerHTML = `
+                <div class="victima-info">
+                    ${mensajeAmanecer}
+                </div>
+                <button onclick="iniciarVotacion()">Iniciar votación</button>
+            `;
+            
+            agregarLogEvento(mensajeAmanecer);
+            actualizarEstadoJuego();
+            
+            // Verificar victoria
+            if (verificarVictoria()) {
+                return;
+            }
+        }
+
+        function iniciarVotacion() {
+
+             // MOSTRAR JUGADORES MUERTOS ANTES DE VOTAR
+            let muertos = jugadores.filter(j => j.muerto);
+            if (muertos.length > 0) {
+                let mensajeMuertos = "Jugadores muertos: " + muertos.map(m => `${m.nombre} (${m.rol.nombre})`).join(", ");
+                alert(mensajeMuertos);
+                agregarLogEvento("Resumen antes de votación: " + mensajeMuertos);
+            }
+            votacionActiva = true;
+            votosIndividuales = {};
+            votosContados = 0;
+            
+            let jugadoresVivos = jugadores.filter(j => !j.muerto);
+            
+            // Inicializar votos
+            jugadoresVivos.forEach(j => {
+                votosIndividuales[j.id] = {
+                    votosRecibidos: 0
+                };
+            });
+            
+            let listaHTML = `
+                <div class="votacion-manual">
+                    <p>Cada jugador debe votar individualmente:</p>
+            `;
+            
+            jugadoresVivos.forEach(j => {
+                let alguacilBadge = j.alguacil ? '<span class="alguacil-badge">🏅 Alguacil</span>' : '';
+                listaHTML += `
+                    <div class="voto-jugador ${j.alguacil ? 'alguacil' : ''}">
+                        <span>${j.nombre} ${alguacilBadge}</span>
+                        <div>
+                            <select id="voto-${j.id}">
+                                <option value="">Selecciona un jugador</option>
+                                ${generarOpcionesVotacion(j.id)}
+                            </select>
+                            <button onclick="registrarVoto(${j.id})">Registrar voto</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            listaHTML += `</div>`;
+            
+            document.getElementById("listaVotacion").innerHTML = listaHTML;
+            document.getElementById("votacionContainer").style.display = "block";
+            document.getElementById("btnFinalizarVotacion").style.display = "none";
+            
+            document.getElementById("faseDescripcion").textContent = "Los jugadores votan para linchar a un sospechoso.";
+        }
+
+        function generarOpcionesVotacion(excluirId) {
+            let options = '';
+            jugadores.forEach(j => {
+                if (!j.muerto && j.id !== excluirId) {
+                    options += `<option value="${j.id}">${j.nombre}</option>`;
+                }
+            });
+            return options;
+        }
+
+        function registrarVoto(idVotante) {
+            let select = document.getElementById(`voto-${idVotante}`);
+            let idObjetivo = select.value;
+            
+            if (!idObjetivo) {
+                alert("Debes seleccionar un jugador para votar.");
+                return;
+            }
+            
+            let votante = jugadores.find(j => j.id === idVotante);
+            let objetivo = jugadores.find(j => j.id == idObjetivo);
+            
+            // El voto del Alguacil cuenta doble
+            let incremento = votante.alguacil ? 2 : 1;
+            
+            // Registrar el voto
+            votosIndividuales[idObjetivo].votosRecibidos += incremento;
+            
+            // Deshabilitar el selector y botón para este votante
+            select.disabled = true;
+            document.querySelector(`#voto-${idVotante} + button`).disabled = true;
+            
+            votosContados++;
+            
+            agregarLogEvento(`${votante.nombre} ha votado por ${objetivo.nombre}${votante.alguacil ? ' (voto doble)' : ''}`);
+            
+            // Si todos han votado, mostrar el botón para finalizar
+            if (votosContados >= jugadores.filter(j => !j.muerto).length) {
+                document.getElementById("btnFinalizarVotacion").style.display = "block";
+            }
+        }
+
+        function finalizarVotacion() {
+            votacionActiva = false;
+            
+            // Calcular votos totales
+            let maxVotos = 0;
+            let jugadoresConMaxVotos = [];
+            
+            for (let id in votosIndividuales) {
+                let votosRecibidos = votosIndividuales[id].votosRecibidos;
+                if (votosRecibidos > maxVotos) {
+                    maxVotos = votosRecibidos;
+                    jugadoresConMaxVotos = [parseInt(id)];
+                } else if (votosRecibidos === maxVotos) {
+                    jugadoresConMaxVotos.push(parseInt(id));
+                }
+            }
+            
+            let resultadoVotacion = "";
+            
+            if (maxVotos === 0 || jugadoresConMaxVotos.length === 0) {
+                resultadoVotacion = "Nadie ha sido linchado.";
+            } else if (jugadoresConMaxVotos.length > 1) {
+                resultadoVotacion = "Empate en la votación. Nadie es linchado.";
+            } else {
+                let linchado = jugadores.find(j => j.id === jugadoresConMaxVotos[0]);
+                linchado.muerto = true;
+                resultadoVotacion = `${linchado.nombre} ha sido linchado. Era ${linchado.rol.nombre}.`;
+                
+                agregarLogEvento(resultadoVotacion);
+                
+                // Si el linchado era Alguacil, designar sucesor
+                if (linchado.alguacil) {
+                    designarSucesorAlguacil(linchado);
+                }
+                
+                // Si el linchado era enamorado, matar también al otro enamorado
+                if (linchado.enamorado) {
+                    let otroEnamorado = enamorados.find(e => e.id !== linchado.id && !e.muerto);
+                    if (otroEnamorado) {
+                        otroEnamorado.muerto = true;
+                        agregarLogEvento(`${otroEnamorado.nombre} muere de amor por ${linchado.nombre}`);
+                    }
+                }
+            }
+            
+            // MOSTRAR RESULTADO CLARAMENTE
+            document.getElementById("accionesContainer").innerHTML = `
+                <div class="resultado-muerte">
+                    ${resultadoVotacion}
+                </div>
+            `;
+            document.getElementById("btnFinalizarVotacion").style.display = "none";
+            
+            // Verificar victoria
+            if (verificarVictoria()) {
+                return;
+            }
+            
+            // Preparar siguiente noche
+            setTimeout(() => {
+                noche++;
+                faseActual = 0;
+                victimaNoche = null;
+                segundaVictimaNoche = null;
+                pociónCuraUsada = false;
+                pociónVenenoUsada = false;
+                document.getElementById("noche").textContent = noche;
+                mostrarFase();
+                actualizarEstadoJuego();
+            }, 3000);
+        }
+
+        function verificarVictoria() {
+            let lobosVivos = jugadores.filter(j => !j.muerto && j.rol.tipo === "lobo").length;
+            let aldeanosVivos = jugadores.filter(j => !j.muerto && j.rol.tipo === "aldeano").length;
+            
+            let mensajeVictoria = "";
+            
+            if (lobosVivos === 0) {
+                mensajeVictoria = "¡Los aldeanos han ganado! Todos los hombres lobo han sido eliminados.";
+            } else if (lobosVivos >= aldeanosVivos) {
+                mensajeVictoria = "¡Los hombres lobo han ganado! Superan o igualan en número a los aldeanos.";
+            } else if (enamorados.length > 0 && enamorados.every(e => e.muerto)) {
+                mensajeVictoria = "¡Los enamorados han ganado! Ambos han muerto juntos.";
+            } else {
+                // No hay victoria aún
+                return false;
+            }
+            
+            document.getElementById("faseTitulo").textContent = "🏆 Fin del juego";
+            document.getElementById("faseDescripcion").textContent = mensajeVictoria;
+            document.getElementById("accionesContainer").innerHTML = `
+                <div class="victima-info">
+                    ${mensajeVictoria}
+                </div>
+                <button onclick="mostrarResumenFinal()">Ver resumen final</button>
+            `;
+            document.getElementById("votacionContainer").style.display = "none";
+            document.getElementById("btnSiguiente").style.display = "none";
+            
+            agregarLogEvento("FIN DEL JUEGO: " + mensajeVictoria);
+            
+            return true;
+        }
+
+        function mostrarResumenFinal() {
+            let resumen = "<h3>Resumen final de la partida:</h3><ul>";
+            
+            jugadores.forEach(j => {
+                let alguacilInfo = j.alguacil ? " 🏅" : "";
+                resumen += `<li>${j.nombre}: ${j.rol.nombre} ${j.rol.img}${alguacilInfo} - ${j.muerto ? "💀 Muerto" : "❤️ Vivo"}</li>`;
+            });
+            
+            resumen += "</ul>";
+            
+            document.getElementById("accionesContainer").innerHTML = resumen;
+        }
+
+        function designarSucesorAlguacil(alguacilMuerto) {
+            let jugadoresVivos = jugadores.filter(j => !j.muerto && j.id !== alguacilMuerto.id);
+            
+            if (jugadoresVivos.length > 0) {
+                let nuevoAlguacil = jugadoresVivos[0];
+                alguacilActual = nuevoAlguacil;
+                nuevoAlguacil.alguacil = true;
+                
+                agregarLogEvento(`${alguacilMuerto.nombre} designa a ${nuevoAlguacil.nombre} como nuevo Alguacil.`);
+                actualizarEstadoJuego();
+            }
+        }
+
+        // FUNCIONES DE ACCIONES ESPECÍFICAS
+        function accionVidente() {
+            let objetivoId = document.getElementById("objetivoVidente").value;
+            if (!objetivoId) {
+                alert("Debes seleccionar un jugador para ver su rol.");
+                return;
+            }
+            
+            let objetivo = jugadores.find(j => j.id == objetivoId);
+            
+            // Mostrar imagen del rol en lugar de solo texto
+            let imagenHTML = "";
+            if (objetivo.rol.imagen) {
+                imagenHTML = `<div style="text-align:center; margin:20px 0;">
+                    <img src="imagenes_roles/${objetivo.rol.imagen}" alt="${objetivo.rol.nombre}" 
+                        style="max-width:100%; max-height:300px; border:3px solid var(--color-secundario); border-radius:10px;">
+                    <p style="margin-top:10px; font-size:1.2em;"><strong>${objetivo.rol.nombre}</strong></p>
+                </div>`;
+            }
+            
+            // Crear ventana modal para mostrar la imagen
+            let modalHTML = `
+                <div id="modalVidente" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; display:flex; justify-content:center; align-items:center;">
+                    <div style="background:var(--color-contenedor); padding:30px; border-radius:15px; max-width:90%; max-height:90%; overflow:auto; text-align:center;">
+                        <h3 style="color:var(--color-secundario); margin-bottom:20px;">🔮 La Vidente ha descubierto:</h3>
+                        <p style="font-size:1.2em; margin-bottom:20px;">${objetivo.nombre} es:</p>
+                        ${imagenHTML}
+                        <p style="margin:20px 0; font-style:italic;">${objetivo.rol.descripcion}</p>
+                        <button onclick="cerrarModalVidente()" style="margin-top:20px; padding:12px 30px; font-size:1.1em;">OK - Continuar</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            agregarLogEvento(`La vidente ha descubierto que ${objetivo.nombre} es ${objetivo.rol.nombre}`);
+        }
+
+        function cerrarModalVidente() {
+            let modal = document.getElementById("modalVidente");
+            if (modal) {
+                modal.remove();
+            }
+            accionCompletada = true;
+            document.getElementById("btnSiguiente").disabled = false;
+        }
+
+
+        function usarPocionCura() {
+            pociónCuraUsada = true;
+            victimaNoche.protegido = true;
+            alert(`Has salvado a ${victimaNoche.nombre} de la muerte.`);
+            agregarLogEvento(`La bruja ha usado la poción curativa para salvar a ${victimaNoche.nombre}`);
+            
+            accionCompletada = true;
+            document.getElementById("btnSiguiente").disabled = false;
+        }
+
+        function usarPocionVeneno() {
+            let objetivoId = document.getElementById("victimaVeneno").value;
+            if (!objetivoId) {
+                alert("Debes seleccionar un jugador para envenenar.");
+                return;
+            }
+            
+            let objetivo = jugadores.find(j => j.id == objetivoId);
+            pociónVenenoUsada = true;
+            objetivo.muerto = true;
+            
+            alert(`Has envenenado a ${objetivo.nombre}.`);
+            agregarLogEvento(`La bruja ha usado la poción venenosa para matar a ${objetivo.nombre}`);
+
+                // ACTUALIZAR INTERFAZ INMEDIATAMENTE
+            actualizarEstadoJuego();
+
+            accionCompletada = true;
+            document.getElementById("btnSiguiente").disabled = false;
+        }
+
+
+        function noUsarPociones() {
+            alert("No usas ninguna poción esta noche.");
+            accionCompletada = true;
+            document.getElementById("btnSiguiente").disabled = false;
+        }
+
+        function protegerJugador() {
+            let objetivoId = document.getElementById("objetivoProtector").value;
+            if (!objetivoId) {
+                alert("Debes seleccionar un jugador para proteger.");
+                return;
+            }
+            
+            let objetivo = jugadores.find(j => j.id == objetivoId);
+            objetivo.protegido = true;
+            alert(`Has protegido a ${objetivo.nombre} esta noche.`);
+            agregarLogEvento(`El protector ha protegido a ${objetivo.nombre}`);
+            
+            accionCompletada = true;
+            document.getElementById("btnSiguiente").disabled = false;
+        }
+
+        function elegirVictima() {
+            let victimaId = document.getElementById("victimaLobo").value;
+            if (!victimaId) {
+                alert("Debes seleccionar una víctima.");
+                return;
+            }
+            
+            victimaNoche = jugadores.find(j => j.id == victimaId);
+            alert(`Los lobos han elegido a ${victimaNoche.nombre} como víctima.`);
+            agregarLogEvento(`Los hombres lobo han elegido a ${victimaNoche.nombre} como víctima`);
+            
+            accionCompletada = true;
+            document.getElementById("btnSiguiente").disabled = false;
+        }
+
+        function elegirSegundaVictima() {
+            let segundaVictimaId = document.getElementById("segundaVictima").value;
+            if (!segundaVictimaId) {
+                alert("Debes seleccionar una segunda víctima.");
+                return;
+            }
+            
+            segundaVictimaNoche = jugadores.find(j => j.id == segundaVictimaId);
+            alert(`El Lobo Feroz ha devorado a ${segundaVictimaNoche.nombre}.`);
+            agregarLogEvento(`El Lobo Feroz ha devorado a ${segundaVictimaNoche.nombre}`);
+            
+            accionCompletada = true;
+            document.getElementById("btnSiguiente").disabled = false;
+        }
+
+        function noSegundaVictima() {
+            alert("El Lobo Feroz no devora una segunda víctima.");
+            accionCompletada = true;
+            document.getElementById("btnSiguiente").disabled = false;
+        }
+
+        function hechizarJugador() {
+            let objetivoId = document.getElementById("objetivoFlautista").value;
+            if (!objetivoId) {
+                alert("Debes seleccionar un jugador para hechizar.");
+                return;
+            }
+            
+            let objetivo = jugadores.find(j => j.id == objetivoId);
+            objetivo.hechizado = true;
+            jugadoresHechizados.push(objetivo);
+            alert(`Has hechizado a ${objetivo.nombre}.`);
+            agregarLogEvento(`El flautista ha hechizado a ${objetivo.nombre}`);
+            
+            accionCompletada = true;
+            document.getElementById("btnSiguiente").disabled = false;
+        }
+
+        function completarAccionCupido() {
+            let enamorado1 = document.getElementById("enamorado1").value;
+            let enamorado2 = document.getElementById("enamorado2").value;
+            
+            if (!enamorado1 || !enamorado2 || enamorado1 === enamorado2) {
+                alert("Debes seleccionar dos jugadores diferentes para enamorar.");
+                return;
+            }
+            
+            let j1 = jugadores.find(j => j.id == enamorado1);
+            let j2 = jugadores.find(j => j.id == enamorado2);
+            
+            j1.enamorado = true;
+            j2.enamorado = true;
+            enamorados = [j1, j2];
+            
+            alert(`Has enamorado a ${j1.nombre} y ${j2.nombre}.`);
+            agregarLogEvento(`Cupido ha unido en amor a ${j1.nombre} y ${j2.nombre}`);
+            
+            accionCompletada = true;
+            document.getElementById("btnSiguiente").disabled = false;
+        }
+
+        // FUNCIONES UTILITARIAS
+        function actualizarEstadoJuego() {
+            let jugadoresVivos = jugadores.filter(j => !j.muerto).length;
+            document.getElementById("jugadoresVivos").textContent = jugadoresVivos;
+            document.getElementById("alguacilActual").textContent = alguacilActual ? alguacilActual.nombre : "-";
+        }
+
+        function agregarLogEvento(mensaje) {
+            let timestamp = new Date().toLocaleTimeString();
+            logEventos.push(`${timestamp}: ${mensaje}`);
+            
+            let logContainer = document.getElementById("logEventos");
+            logContainer.innerHTML = "";
+            
+            let eventosRecientes = logEventos.slice(-10);
+            eventosRecientes.forEach(evento => {
+                let div = document.createElement("div");
+                div.className = "log-entry";
+                div.textContent = evento;
+                logContainer.appendChild(div);
+            });
+            
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function toggleLog() {
+            let logContainer = document.getElementById("logContainer");
+            let btnOcultar = document.getElementById("btnOcultarLog");
+            
+            if (logVisible) {
+                logContainer.style.display = "none";
+                btnOcultar.textContent = "Mostrar";
+                logVisible = false;
+            } else {
+                logContainer.style.display = "block";
+                btnOcultar.textContent = "Ocultar";
+                logVisible = true;
+            }
+        }
+
+        function reiniciarPartida() {
+            if (confirm("¿Estás seguro de que quieres reiniciar la partida? Se conservarán los nombres de los jugadores pero se reiniciará el juego.")) {
+                // Reiniciar variables del juego pero conservar nombres
+                logEventos = [];
+                enamorados = [];
+                jugadoresHechizados = [];
+                jugadoresInfectados = [];
+                votos = {};
+                votacionActiva = false;
+                pociónCuraUsada = false;
+                pociónVenenoUsada = false;
+                alguacilActual = null;
+                faseActual = 0;
+                noche = 1;
+                victimaNoche = null;
+                segundaVictimaNoche = null;
+                rolesRegistrados = 0;
+                
+                // VOLVER A PANTALLA 5 (REGISTRO INDIVIDUAL DE ROLES)
+                document.getElementById("pantalla7").style.display = "none";
+                document.getElementById("pantalla5").style.display = "block";
+                
+                // Resetear roles de jugadores
+                jugadores.forEach(j => {
+                    j.rol = null;
+                    j.muerto = false;
+                    j.protegido = false;
+                    j.alguacil = false;
+                    j.enamorado = false;
+                    j.hechizado = false;
+                    j.infectado = false;
+                });
+                
+                mostrarRegistroRoles();
+            }
+        }
+
+        function nuevaPartida() {
+            if (confirm("¿Estás seguro de que quieres comenzar una nueva partida? Se perderá toda la información actual.")) {
+                // Limpiar todo
+                nombresGuardados = [];
+                volverAPantalla1();
+            }
+        }
+
+        function volverAPantalla1() {
+            document.getElementById("pantalla2").style.display = "none";
+            document.getElementById("pantalla3").style.display = "none";
+            document.getElementById("pantalla4").style.display = "none";
+            document.getElementById("pantalla5").style.display = "none";
+            document.getElementById("pantalla6").style.display = "none";
+            document.getElementById("pantalla7").style.display = "none";
+            document.getElementById("pantalla1").style.display = "block";
+        }
+    </script>
+</body>
+</html>
